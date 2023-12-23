@@ -4,6 +4,7 @@ import (
 	"github.com/joho/godotenv"
 	"log"
 	"stori/cmd/db"
+	"stori/cmd/write"
 	"stori/pkg/repository"
 
 	"github.com/go-chi/chi/v5"
@@ -19,8 +20,6 @@ func main() {
 }
 
 func run() error {
-	database := db.Connection()
-
 	errEnv := godotenv.Load(".env")
 	if errEnv != nil {
 		panic(errEnv)
@@ -28,13 +27,16 @@ func run() error {
 
 	log.Println("starting...")
 
+	database := db.Connection()
+
 	mailRepository := repository.NewMailRepository()
-	saveDBRepository := repository.NewSaveDBRepository(database)
+	transactionRepository := repository.NewTransactionRepository(database)
+	summaryRepository := repository.NewSummaryRepository(database)
 
-	accountService := service.NewAccountService(mailRepository, saveDBRepository)
-	accountHandler := NewAccountHandler(accountService).Handle
+	accountService := service.NewAccountService(mailRepository, transactionRepository, summaryRepository)
+	accountHandler := write.NewAccountHandler(accountService).Handle
 
-	app := AppHandler{
+	app := write.AppHandler{
 		AccountHandler: accountHandler,
 	}
 

@@ -14,14 +14,17 @@ import (
 )
 
 type AccountService struct {
-	MailRepository   repository.MailRepository
-	SaveDBRepository repository.SaveDBRepository
+	MailRepository        repository.MailRepository
+	TransactionRepository repository.TransactionRepository
+	SummaryRepository     repository.SummaryRepository
 }
 
-func NewAccountService(mailRepository repository.MailRepository, saveDBRepository repository.SaveDBRepository) AccountService {
+func NewAccountService(mailRepository repository.MailRepository, TransactionRepository repository.TransactionRepository,
+	SummaryRepository repository.SummaryRepository) AccountService {
 	return AccountService{
-		MailRepository:   mailRepository,
-		SaveDBRepository: saveDBRepository,
+		MailRepository:        mailRepository,
+		TransactionRepository: TransactionRepository,
+		SummaryRepository:     SummaryRepository,
 	}
 }
 
@@ -80,7 +83,7 @@ func (s *AccountService) process(ctx context.Context, transactions [][]string) (
 			return models.Summary{}, errCount
 		}
 
-		err := s.SaveDBRepository.SaveTransaction(ctx, &models.Transaction{
+		err := s.TransactionRepository.Save(ctx, &models.Transaction{
 			Date:        transaction[1],
 			Transaction: transaction[2],
 		})
@@ -97,7 +100,7 @@ func (s *AccountService) process(ctx context.Context, transactions [][]string) (
 		MonthlyTransactions: fmt.Sprint(monthsCount),
 	}
 
-	err := s.SaveDBRepository.SaveSummary(ctx, &summary)
+	err := s.SummaryRepository.Save(ctx, &summary)
 	if err != nil {
 		return models.Summary{}, err
 	}

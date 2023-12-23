@@ -1,7 +1,7 @@
 version: '3.9'
 
 services:
-  web36:
+  web40:
     build: .
     env_file:
       - .env
@@ -9,15 +9,14 @@ services:
       - "3000:3000"
     volumes:
       - .:/usr/src/app
-    command: go run cmd/main.go cmd/routes.go cmd/account_handler.go -b 0.0.0.0
-  db36:
-    container_name: postgres
+    command: go run cmd/main.go -b 0.0.0.0
+  postgres_host1:
     image: postgres:latest
+    container_name: postgres
+    restart: always
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=
       - POSTGRES_DB=postgres
       - POSTGRES_HOST_AUTH_METHOD=trust
     ports:
       - "5432:5432"
-    restart: always
