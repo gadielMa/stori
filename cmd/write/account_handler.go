@@ -5,14 +5,13 @@ import (
 	"github.com/satori/go.uuid"
 	"net/http"
 	"stori/cmd/logger"
-	"stori/pkg/service"
 )
 
 type AccountHandler struct {
-	AccountService service.AccountService
+	AccountService AccountService
 }
 
-func NewAccountHandler(accountService service.AccountService) *AccountHandler {
+func NewAccountHandler(accountService AccountService) *AccountHandler {
 	return &AccountHandler{
 		AccountService: accountService,
 	}

@@ -1,9 +1,18 @@
 package service
 
+import (
+	"context"
+	"stori/cmd/models"
+)
+
 type SendMail interface {
-	Send() error
+	Send(ctx context.Context, summary models.Summary) error
 }
 
-type SaveDBRepository interface {
-	Save() error
+type SaveSummaryRepository interface {
+	Save(ctx context.Context, summary *models.Summary) error
+}
+
+type SaveTransactionRepository interface {
+	Save(ctx context.Context, summary *models.Transaction) error
 }

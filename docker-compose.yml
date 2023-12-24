@@ -1,7 +1,7 @@
 version: '3.9'
 
 services:
-  web40:
+  api:
     build: .
     env_file:
       - .env
@@ -10,13 +10,13 @@ services:
     volumes:
       - .:/usr/src/app
     command: go run cmd/main.go -b 0.0.0.0
-  postgres_host1:
+  postgres:
     image: postgres:latest
     container_name: postgres
     restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=postgres
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_HOST_AUTH_METHOD=trust
     ports:
       - "5432:5432"

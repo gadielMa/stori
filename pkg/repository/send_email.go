@@ -6,9 +6,15 @@ import (
 	"crypto/tls"
 	gomail "gopkg.in/mail.v2"
 	"html/template"
+	"os"
 	"stori/cmd/logger"
 	"stori/cmd/models"
 	"strings"
+)
+
+const (
+	HtmlMail  = "mail.html"
+	SmtpGmail = "smtp.gmail.com"
 )
 
 type MailRepository struct{}
@@ -20,10 +26,10 @@ func NewMailRepository() MailRepository {
 func (r *MailRepository) Send(ctx context.Context, summary models.Summary) error {
 	logger.Info(ctx, "starting...")
 
-	temp := template.New("mail.html")
+	temp := template.New(HtmlMail)
 
 	var errParse error
-	temp, errParse = temp.ParseFiles("mail.html")
+	temp, errParse = temp.ParseFiles(HtmlMail)
 	if errParse != nil {
 		logger.Error(ctx, errParse.Error())
 		return errParse
@@ -36,15 +42,15 @@ func (r *MailRepository) Send(ctx context.Context, summary models.Summary) error
 	}
 
 	msg := gomail.NewMessage()
-	msg.SetHeader("From", "gmalagrino@frba.utn.edu.ar")
-	msg.SetHeader("To", "gadiel.malagrino@gmail.com")
+	msg.SetHeader("From", os.Getenv("MAIL_FROM"))
+	msg.SetHeader("To", os.Getenv("MAIL_TO"))
 	msg.SetHeader("Subject", "Stori Challenge")
 	msg.SetBody("text/html", buffer.String())
 
-	dialer := gomail.NewDialer("smtp.gmail.com", 587, "gmalagrino@frba.utn.edu.ar", "zisa scgz irak rtuv") //TODO
+	dialer := gomail.NewDialer(SmtpGmail, 587, os.Getenv("MAIL_FROM"), os.Getenv("MAIL_FROM_PASSWORD"))
 
 	dialer.TLSConfig = &tls.Config{
-		ServerName:         "smtp.gmail.com",
+		ServerName:         SmtpGmail,
 		InsecureSkipVerify: false,
 	}
 

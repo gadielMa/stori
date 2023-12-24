@@ -33,8 +33,8 @@ func run() error {
 	transactionRepository := repository.NewTransactionRepository(database)
 	summaryRepository := repository.NewSummaryRepository(database)
 
-	accountService := service.NewAccountService(mailRepository, transactionRepository, summaryRepository)
-	accountHandler := write.NewAccountHandler(accountService).Handle
+	accountService := service.NewAccountService(&mailRepository, &transactionRepository, &summaryRepository)
+	accountHandler := write.NewAccountHandler(&accountService).Handle
 
 	app := write.AppHandler{
 		AccountHandler: accountHandler,

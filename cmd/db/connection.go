@@ -9,11 +9,11 @@ import (
 	"stori/cmd/models"
 )
 
-const DSN = "host=postgres_host1 user=%s dbname=%s port=%s sslmode=disable TimeZone=America/Los_Angeles"
+const DSN = "host=postgres user=%s dbname=%s port=%s sslmode=disable TimeZone=America/Los_Angeles"
 
 func Connection() *gorm.DB {
 	DB, errDB := gorm.Open(postgres.Open(
-		fmt.Sprintf(DSN, os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"), os.Getenv("DB_PORT"))),
+		fmt.Sprintf(DSN, os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_DB"), os.Getenv("DB_PORT"))),
 		&gorm.Config{})
 	if errDB != nil {
 		panic(errDB)

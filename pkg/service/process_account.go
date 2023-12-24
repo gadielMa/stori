@@ -8,27 +8,26 @@ import (
 	"os"
 	"stori/cmd/logger"
 	"stori/cmd/models"
-	"stori/pkg/repository"
 	"strconv"
 	"strings"
 )
 
-type AccountService struct {
-	MailRepository        repository.MailRepository
-	TransactionRepository repository.TransactionRepository
-	SummaryRepository     repository.SummaryRepository
+type Service struct {
+	MailRepository        SendMail
+	TransactionRepository SaveTransactionRepository
+	SummaryRepository     SaveSummaryRepository
 }
 
-func NewAccountService(mailRepository repository.MailRepository, TransactionRepository repository.TransactionRepository,
-	SummaryRepository repository.SummaryRepository) AccountService {
-	return AccountService{
+func NewAccountService(mailRepository SendMail, transactionRepository SaveTransactionRepository,
+	summaryRepository SaveSummaryRepository) Service {
+	return Service{
 		MailRepository:        mailRepository,
-		TransactionRepository: TransactionRepository,
-		SummaryRepository:     SummaryRepository,
+		TransactionRepository: transactionRepository,
+		SummaryRepository:     summaryRepository,
 	}
 }
 
-func (s *AccountService) ProcessSummary(ctx context.Context) error {
+func (s *Service) ProcessSummary(ctx context.Context) error {
 	logger.Info(ctx, "opening txns.csv...")
 
 	f, errOpen := os.Open("txns.csv")
@@ -61,7 +60,7 @@ func (s *AccountService) ProcessSummary(ctx context.Context) error {
 	return nil
 }
 
-func (s *AccountService) process(ctx context.Context, transactions [][]string) (models.Summary, error) {
+func (s *Service) process(ctx context.Context, transactions [][]string) (models.Summary, error) {
 	var (
 		monthsCount               [12]int
 		creditAmount, debitAmount float64
